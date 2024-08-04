@@ -15,6 +15,7 @@ token_type_dict = {
     ";": "SEMICOLON",
     "*": "STAR",
     "=": "EQUAL",
+    "!": "BANG",
 }
 
 
@@ -60,6 +61,10 @@ def main():
                             token = "EQUAL_EQUAL"
                             char = "=="
                             skip_next_char = True
+                        elif char == "!" and line[idx + 1] == "=":
+                            token = "BANG_EQUAL"
+                            char = "!="
+                            skip_next_char = True
                     except:
                         pass
                     print(f"{token} {char} null")
@@ -98,6 +103,7 @@ test_data = {
         "EQUAL = null\nLEFT_BRACE { null\nEQUAL_EQUAL == null\nEQUAL = null\nRIGHT_BRACE } null\nEOF  null\n",
         "",
     ],
+    "!!===": [0, "BANG ! null\nBANG_EQUAL != null\nEQUAL_EQUAL == null\nEOF  null\n", ""],
 }
 
 
