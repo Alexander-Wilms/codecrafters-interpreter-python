@@ -17,6 +17,13 @@ token_type_dict = {
 }
 
 
+def eprint(*args, **kwargs):
+    """
+    https://stackoverflow.com/a/14981125/2278742
+    """
+    print(*args, file=sys.stderr, **kwargs)
+
+
 def main():
     exit_code = 0
 
@@ -38,7 +45,7 @@ def main():
         for line_number, line in enumerate(file_contents):
             for char in line:
                 if not char in token_type_dict:
-                    print(f"[line {line_number+1}] Error: Unexpected character: {char}")
+                    eprint(f"[line {line_number+1}] Error: Unexpected character: {char}")
                     exit_code = 65
             for char in line:
                 if char in token_type_dict:
