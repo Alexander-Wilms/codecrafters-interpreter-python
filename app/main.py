@@ -24,8 +24,6 @@ def main():
             if char in token_type_dict:
                 print(f"{token_type_dict[char]} {char} null")
         print("EOF  null")
-    else:
-        raise Exception("File is empty")
 
 
 def test_main(capsys):
