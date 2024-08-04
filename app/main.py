@@ -82,6 +82,7 @@ def main():
                     if char == '"':
                         if in_string_literal:
                             print(f'STRING "{string_literal}" {string_literal}')
+                            string_literal = ""
                         in_string_literal = not in_string_literal
                     elif in_string_literal:
                         string_literal += char
@@ -164,6 +165,11 @@ test_data = {
     '"foo <	>bar 123 // hello world!"': [
         0,
         'STRING "foo <	>bar 123 // hello world!" foo <	>bar 123 // hello world!\nEOF  null\n',
+        "",
+    ],
+    '("hello"+"baz") != "other_string"': [
+        0,
+        'LEFT_PAREN ( null\nSTRING "hello" hello\nPLUS + null\nSTRING "baz" baz\nRIGHT_PAREN ) null\nBANG_EQUAL != null\nSTRING "other_string" other_string\nEOF  null\n',
         "",
     ],
 }
