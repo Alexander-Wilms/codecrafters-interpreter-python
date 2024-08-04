@@ -18,6 +18,8 @@ token_type_dict = {
 
 
 def main():
+    exit_code = 0
+
     if len(sys.argv) < 3:
         print("Usage: ./your_program.sh tokenize <filename>", file=sys.stderr)
         exit(1)
@@ -37,12 +39,15 @@ def main():
             for char in line:
                 if not char in token_type_dict:
                     print(f"[line {line_number+1}] Error: Unexpected character: {char}")
+                    exit_code = 65
             for char in line:
                 if char in token_type_dict:
                     print(f"{token_type_dict[char]} {char} null")
         print("EOF  null")
     else:
         print("EOF  null")
+
+    exit(exit_code)
 
 
 test_data = {
