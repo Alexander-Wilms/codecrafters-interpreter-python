@@ -7,6 +7,12 @@ token_type_dict = {
     ")": "RIGHT_PAREN",
     "{": "LEFT_BRACE",
     "}": "RIGHT_BRACE",
+    ",": "COMMA",
+    ".": "DOT",
+    "-": "MINUS",
+    "+": "PLUS",
+    ";": "SEMICOLON",
+    "*": "STAR",
 }
 
 
@@ -37,6 +43,7 @@ def main():
 test_data = {
     "(()": "LEFT_PAREN ( null\nLEFT_PAREN ( null\nRIGHT_PAREN ) null\nEOF  null\n",
     "{{}}": "LEFT_BRACE { null\nLEFT_BRACE { null\nRIGHT_BRACE } null\nRIGHT_BRACE } null\nEOF  null\n",
+    "({*.,+*})": "LEFT_PAREN ( null\nLEFT_BRACE { null\nSTAR * null\nDOT . null\nCOMMA , null\nPLUS + null\nSTAR * null\nRIGHT_BRACE } null\nRIGHT_PAREN ) null\nEOF  null\n",
 }
 
 
