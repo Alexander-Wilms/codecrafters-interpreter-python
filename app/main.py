@@ -24,6 +24,8 @@ def main():
             if char in token_type_dict:
                 print(f"{token_type_dict[char]} {char} null")
         print("EOF  null")
+    else:
+        print("EOF  null")
 
 
 def test_main(capsys):
