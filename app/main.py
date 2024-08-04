@@ -14,6 +14,7 @@ token_type_dict = {
     "+": "PLUS",
     ";": "SEMICOLON",
     "*": "STAR",
+    "=": "EQUAL",
 }
 
 
@@ -47,22 +48,56 @@ def main():
                 if not char in token_type_dict:
                     eprint(f"[line {line_number+1}] Error: Unexpected character: {char}")
                     exit_code = 65
-            for char in line:
+            skip_next_char = False
+            for idx, char in enumerate(line):
+                if skip_next_char:
+                    skip_next_char = False
+                    continue
                 if char in token_type_dict:
-                    print(f"{token_type_dict[char]} {char} null")
+                    token = token_type_dict[char]
+                    try:
+                        if char == "=" and line[idx + 1] == "=":
+                            token = "EQUAL_EQUAL"
+                            char = "=="
+                            skip_next_char = True
+                    except:
+                        pass
+                    print(f"{token} {char} null")
         print("EOF  null")
     else:
         print("EOF  null")
 
     exit(exit_code)
 
+
 # expected values:
 # exit code, stdout, stderr
 test_data = {
-    "(()": [0, "LEFT_PAREN ( null\nLEFT_PAREN ( null\nRIGHT_PAREN ) null\nEOF  null\n", ""],
-    "{{}}": [0, "LEFT_BRACE { null\nLEFT_BRACE { null\nRIGHT_BRACE } null\nRIGHT_BRACE } null\nEOF  null\n", ""],
-    "({*.,+*})": [0, "LEFT_PAREN ( null\nLEFT_BRACE { null\nSTAR * null\nDOT . null\nCOMMA , null\nPLUS + null\nSTAR * null\nRIGHT_BRACE } null\nRIGHT_PAREN ) null\nEOF  null\n", ""],
-    ",.$(#": [65, "COMMA , null\nDOT . null\nLEFT_PAREN ( null\nEOF  null\n", "[line 1] Error: Unexpected character: $\n[line 1] Error: Unexpected character: #\n"],
+    "(()": [
+        0,
+        "LEFT_PAREN ( null\nLEFT_PAREN ( null\nRIGHT_PAREN ) null\nEOF  null\n",
+        "",
+    ],
+    "{{}}": [
+        0,
+        "LEFT_BRACE { null\nLEFT_BRACE { null\nRIGHT_BRACE } null\nRIGHT_BRACE } null\nEOF  null\n",
+        "",
+    ],
+    "({*.,+*})": [
+        0,
+        "LEFT_PAREN ( null\nLEFT_BRACE { null\nSTAR * null\nDOT . null\nCOMMA , null\nPLUS + null\nSTAR * null\nRIGHT_BRACE } null\nRIGHT_PAREN ) null\nEOF  null\n",
+        "",
+    ],
+    ",.$(#": [
+        65,
+        "COMMA , null\nDOT . null\nLEFT_PAREN ( null\nEOF  null\n",
+        "[line 1] Error: Unexpected character: $\n[line 1] Error: Unexpected character: #\n",
+    ],
+    "={===}": [
+        0,
+        "EQUAL = null\nLEFT_BRACE { null\nEQUAL_EQUAL == null\nEQUAL = null\nRIGHT_BRACE } null\nEOF  null\n",
+        "",
+    ],
 }
 
 
