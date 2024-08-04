@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+import pytest
 
 token_type_dict = {"(": "LEFT_PAREN", ")": "RIGHT_PAREN"}
 
@@ -28,17 +29,20 @@ def main():
         print("EOF  null")
 
 
-def test_main(capsys):
-    test_input_file_path = Path("test.txt")
+test_data = {"(()": "LEFT_PAREN ( null\nLEFT_PAREN ( null\nRIGHT_PAREN ) null\nEOF  null\n"}
+
+
+@pytest.mark.parametrize("lox_input", test_data.items())
+def test_scanning_parentheses(capsys, lox_input):
+    code, tokens = lox_input
+    test_input_file_path = Path("test.lox")
     with open(test_input_file_path, "w") as f:
-        f.write("(()")
+        f.write(code)
     sys.argv = [__file__, "tokenize", str(test_input_file_path.absolute())]
     main()
 
     captured = capsys.readouterr()
-    assert (
-        captured.out == "LEFT_PAREN null\nLEFT_PAREN null\nRIGHT_PAREN null\nEOF  null\n"
-    )
+    assert captured.out == tokens
 
 
 if __name__ == "__main__":
