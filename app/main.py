@@ -2,7 +2,12 @@ import sys
 from pathlib import Path
 import pytest
 
-token_type_dict = {"(": "LEFT_PAREN", ")": "RIGHT_PAREN"}
+token_type_dict = {
+    "(": "LEFT_PAREN",
+    ")": "RIGHT_PAREN",
+    "{": "LEFT_BRACE",
+    "}": "RIGHT_BRACE",
+}
 
 
 def main():
@@ -29,7 +34,10 @@ def main():
         print("EOF  null")
 
 
-test_data = {"(()": "LEFT_PAREN ( null\nLEFT_PAREN ( null\nRIGHT_PAREN ) null\nEOF  null\n"}
+test_data = {
+    "(()": "LEFT_PAREN ( null\nLEFT_PAREN ( null\nRIGHT_PAREN ) null\nEOF  null\n",
+    "{{}}": "LEFT_BRACE { null\nLEFT_BRACE { null\nRIGHT_BRACE } null\nRIGHT_BRACE } null\nEOF  null\n",
+}
 
 
 @pytest.mark.parametrize("lox_input", test_data.items())
