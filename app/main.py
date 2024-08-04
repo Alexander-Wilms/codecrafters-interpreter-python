@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pytest
 
-token_type_dict = {
+one_char_token_type_dict = {
     "(": "LEFT_PAREN",
     ")": "RIGHT_PAREN",
     "{": "LEFT_BRACE",
@@ -16,6 +16,15 @@ token_type_dict = {
     "*": "STAR",
     "=": "EQUAL",
     "!": "BANG",
+    "<": "LESS",
+    ">": "GREATER",
+}
+
+two_char_token_type_dict = {
+    "==": "EQUAL_EQUAL",
+    "!=": "BANG_EQUAL",
+    "<=": "LESS_EQUAL",
+    ">=": "GREATER_EQUAL",
 }
 
 
@@ -46,7 +55,7 @@ def main():
     if file_contents:
         for line_number, line in enumerate(file_contents):
             for char in line:
-                if not char in token_type_dict:
+                if not char in one_char_token_type_dict:
                     eprint(f"[line {line_number+1}] Error: Unexpected character: {char}")
                     exit_code = 65
             skip_next_char = False
@@ -54,16 +63,14 @@ def main():
                 if skip_next_char:
                     skip_next_char = False
                     continue
-                if char in token_type_dict:
-                    token = token_type_dict[char]
+                if char in one_char_token_type_dict:
+                    token = one_char_token_type_dict[char]
                     try:
-                        if char == "=" and line[idx + 1] == "=":
-                            token = "EQUAL_EQUAL"
-                            char = "=="
-                            skip_next_char = True
-                        elif char == "!" and line[idx + 1] == "=":
-                            token = "BANG_EQUAL"
-                            char = "!="
+                        # wrap in try except so we don't have to check if we're out of bounds of the string
+                        potential_two_char_token = char + line[idx + 1]
+                        if potential_two_char_token in two_char_token_type_dict.keys():
+                            char = potential_two_char_token
+                            token = two_char_token_type_dict[potential_two_char_token]
                             skip_next_char = True
                     except:
                         pass
@@ -104,6 +111,11 @@ test_data = {
         "",
     ],
     "!!===": [0, "BANG ! null\nBANG_EQUAL != null\nEQUAL_EQUAL == null\nEOF  null\n", ""],
+    "<<=>>=": [
+        0,
+        "LESS < null\nLESS_EQUAL <= null\nGREATER > null\nGREATER_EQUAL >= null\nEOF  null\n",
+        "",
+    ],
 }
 
 
