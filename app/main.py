@@ -55,14 +55,20 @@ def main():
 
     if file_contents:
         in_string_literal = False
+        in_number_literal = False
         string_literal = ""
+        number_literal = ""
         for line_number, line in enumerate(file_contents):
             skip_next_n_chars = 0
             for idx, char in enumerate(line):
                 if skip_next_n_chars:
                     skip_next_n_chars -= 1
                     continue
-                if char in one_char_token_type_dict and not in_string_literal:
+                if (
+                    char in one_char_token_type_dict
+                    and not in_string_literal
+                    and not in_number_literal
+                ):
                     token = one_char_token_type_dict[char]
                     try:
                         # wrap in try except so we don't have to check if we're out of bounds of the string
@@ -86,6 +92,12 @@ def main():
                         in_string_literal = not in_string_literal
                     elif in_string_literal:
                         string_literal += char
+                    elif char in "0123456789.":
+                        in_number_literal = True
+                        number_literal += char
+                    elif in_number_literal and char not in "0123456789.":
+                        print(f"NUMBER {number_literal} {number_literal}")
+                        in_number_literal = False
                     # char is not (part of) a token
                     elif char.isspace():
                         # skip over it
@@ -96,6 +108,10 @@ def main():
         if in_string_literal:
             eprint(f"[line {line_number+1}] Error: Unterminated string.")
             exit_code = 65
+        if in_number_literal:
+            # number literal that's not followed by another character before the EOF
+            print(f"NUMBER {number_literal} {number_literal}")
+            in_number_literal = False
         print("EOF  null")
     else:
         print("EOF  null")
@@ -170,6 +186,11 @@ test_data = {
     '("hello"+"baz") != "other_string"': [
         0,
         'LEFT_PAREN ( null\nSTRING "hello" hello\nPLUS + null\nSTRING "baz" baz\nRIGHT_PAREN ) null\nBANG_EQUAL != null\nSTRING "other_string" other_string\nEOF  null\n',
+        "",
+    ],
+    "1234.1234": [
+        0,
+        "NUMBER 1234.1234 1234.1234\nEOF  null\n",
         "",
     ],
 }
