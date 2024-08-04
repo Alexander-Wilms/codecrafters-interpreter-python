@@ -56,26 +56,35 @@ def main():
 
     exit(exit_code)
 
-
+# expected values:
+# exit code, stdout, stderr
 test_data = {
-    "(()": "LEFT_PAREN ( null\nLEFT_PAREN ( null\nRIGHT_PAREN ) null\nEOF  null\n",
-    "{{}}": "LEFT_BRACE { null\nLEFT_BRACE { null\nRIGHT_BRACE } null\nRIGHT_BRACE } null\nEOF  null\n",
-    "({*.,+*})": "LEFT_PAREN ( null\nLEFT_BRACE { null\nSTAR * null\nDOT . null\nCOMMA , null\nPLUS + null\nSTAR * null\nRIGHT_BRACE } null\nRIGHT_PAREN ) null\nEOF  null\n",
-    ",.$(#": "[line 1] Error: Unexpected character: $\n[line 1] Error: Unexpected character: #\nCOMMA , null\nDOT . null\nLEFT_PAREN ( null\nEOF  null\n",
+    "(()": [0, "LEFT_PAREN ( null\nLEFT_PAREN ( null\nRIGHT_PAREN ) null\nEOF  null\n", ""],
+    "{{}}": [0, "LEFT_BRACE { null\nLEFT_BRACE { null\nRIGHT_BRACE } null\nRIGHT_BRACE } null\nEOF  null\n", ""],
+    "({*.,+*})": [0, "LEFT_PAREN ( null\nLEFT_BRACE { null\nSTAR * null\nDOT . null\nCOMMA , null\nPLUS + null\nSTAR * null\nRIGHT_BRACE } null\nRIGHT_PAREN ) null\nEOF  null\n", ""],
+    ",.$(#": [65, "COMMA , null\nDOT . null\nLEFT_PAREN ( null\nEOF  null\n", "[line 1] Error: Unexpected character: $\n[line 1] Error: Unexpected character: #\n"],
 }
 
 
 @pytest.mark.parametrize("lox_input", test_data.items())
 def test_scanning_parentheses(capsys, lox_input):
-    code, tokens = lox_input
+    code, expected_values = lox_input
+    exit_code = expected_values[0]
+    stdout = expected_values[1]
+    stderr = expected_values[2]
     test_input_file_path = Path("test.lox")
     with open(test_input_file_path, "w") as f:
         f.write(code)
     sys.argv = [__file__, "tokenize", str(test_input_file_path.absolute())]
-    main()
+    with pytest.raises(SystemExit) as exc_info:
+        main()
+
+    assert exit_code == exc_info.value.code
 
     captured = capsys.readouterr()
-    assert captured.out == tokens
+
+    assert stdout == captured.out
+    assert stderr == captured.err
 
 
 if __name__ == "__main__":
