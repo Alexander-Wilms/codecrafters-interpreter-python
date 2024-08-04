@@ -75,8 +75,13 @@ def main():
                         pass
                     print(f"{token} {char} null")
                 else:
-                    eprint(f"[line {line_number+1}] Error: Unexpected character: {char}")
-                    exit_code = 65
+                    # char is not (part of) a token
+                    if char.isspace():
+                        # skip over it
+                        pass
+                    else:
+                        eprint(f"[line {line_number+1}] Error: Unexpected character: {char}")
+                        exit_code = 65
         print("EOF  null")
     else:
         print("EOF  null")
@@ -126,6 +131,11 @@ test_data = {
     "/": [
         0,
         "SLASH / null\nEOF  null\n",
+        "",
+    ],
+    "(\t\n )": [
+        0,
+        "LEFT_PAREN ( null\nRIGHT_PAREN ) null\nEOF  null\n",
         "",
     ],
 }
