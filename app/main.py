@@ -62,7 +62,7 @@ def main():
                 if skip_next_n_chars:
                     skip_next_n_chars -= 1
                     continue
-                if char in one_char_token_type_dict:
+                if char in one_char_token_type_dict and not in_string_literal:
                     token = one_char_token_type_dict[char]
                     try:
                         # wrap in try except so we don't have to check if we're out of bounds of the string
@@ -157,9 +157,14 @@ test_data = {
         "",
     ],
     '"bar': [
-        0,
+        65,
         "EOF  null\n",
         "[line 1] Error: Unterminated string.\n",
+    ],
+    '"foo <	>bar 123 // hello world!"': [
+        0,
+        'STRING "foo <	>bar 123 // hello world!" foo <	>bar 123 // hello world!\nEOF  null\n',
+        "",
     ],
 }
 
