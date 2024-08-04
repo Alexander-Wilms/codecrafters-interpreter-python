@@ -1,5 +1,6 @@
 import sys
 from pathlib import Path
+
 import pytest
 
 token_type_dict = {
@@ -29,12 +30,16 @@ def main():
         exit(1)
 
     with open(filename) as file:
-        file_contents = file.read()
+        file_contents = file.readlines()
 
     if file_contents:
-        for char in file_contents:
-            if char in token_type_dict:
-                print(f"{token_type_dict[char]} {char} null")
+        for line_number, line in enumerate(file_contents):
+            for char in line:
+                if not char in token_type_dict:
+                    print(f"[line {line_number+1}] Error: Unexpected character: {char}")
+            for char in line:
+                if char in token_type_dict:
+                    print(f"{token_type_dict[char]} {char} null")
         print("EOF  null")
     else:
         print("EOF  null")
@@ -44,6 +49,7 @@ test_data = {
     "(()": "LEFT_PAREN ( null\nLEFT_PAREN ( null\nRIGHT_PAREN ) null\nEOF  null\n",
     "{{}}": "LEFT_BRACE { null\nLEFT_BRACE { null\nRIGHT_BRACE } null\nRIGHT_BRACE } null\nEOF  null\n",
     "({*.,+*})": "LEFT_PAREN ( null\nLEFT_BRACE { null\nSTAR * null\nDOT . null\nCOMMA , null\nPLUS + null\nSTAR * null\nRIGHT_BRACE } null\nRIGHT_PAREN ) null\nEOF  null\n",
+    ",.$(#": "[line 1] Error: Unexpected character: $\n[line 1] Error: Unexpected character: #\nCOMMA , null\nDOT . null\nLEFT_PAREN ( null\nEOF  null\n",
 }
 
 
