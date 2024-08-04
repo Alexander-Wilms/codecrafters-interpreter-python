@@ -1,4 +1,7 @@
 import sys
+from pathlib import Path
+
+token_type_dict = {"(": "LEFT_PAREN", ")": "RIGHT_PAREN"}
 
 
 def main():
@@ -17,9 +20,25 @@ def main():
         file_contents = file.read()
 
     if file_contents:
-        raise NotImplementedError("Scanner not implemented")
+        for char in file_contents:
+            if char in token_type_dict:
+                print(f"{token_type_dict[char]} {char} null")
+        print("EOF  null")
     else:
-        print("EOF  null") # Placeholder, remove this line when implementing the scanner
+        raise Exception("File is empty")
+
+
+def test_main(capsys):
+    test_input_file_path = Path("test.txt")
+    with open(test_input_file_path, "w") as f:
+        f.write("(()")
+    sys.argv = [__file__, "tokenize", str(test_input_file_path.absolute())]
+    main()
+
+    captured = capsys.readouterr()
+    assert (
+        captured.out == "LEFT_PAREN null\nLEFT_PAREN null\nRIGHT_PAREN null\nEOF  null\n"
+    )
 
 
 if __name__ == "__main__":
