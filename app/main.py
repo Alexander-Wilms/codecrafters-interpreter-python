@@ -72,7 +72,9 @@ def main():
                             token = two_char_token_type_dict[potential_two_char_token]
                             skip_next_n_chars = 1
                         elif potential_two_char_token == "//":
-                            break
+                            if not in_string_literal:
+                                # // doesn't start a comment if it's part of a string literal
+                                break
                     except:
                         pass
                     print(f"{token} {char} null")
