@@ -56,6 +56,7 @@ def main():
     if file_contents:
         in_string_literal = False
         in_number_literal = False
+        period_in_number_literal = False
         string_literal = ""
         number_literal = ""
         for line_number, line in enumerate(file_contents):
@@ -92,9 +93,19 @@ def main():
                         in_string_literal = not in_string_literal
                     elif in_string_literal:
                         string_literal += char
-                    elif char in "0123456789.":
+                    elif char in "0123456789":
                         in_number_literal = True
                         number_literal += char
+                    elif in_number_literal and char == "." and period_in_number_literal == False:
+                        in_number_literal = True
+                        period_in_number_literal = True
+                        number_literal += char
+                    elif in_number_literal and char == "." and period_in_number_literal == True:
+                        print(f"NUMBER {number_literal} {number_literal}")
+                        print(f"DOT . null")
+                        in_number_literal = False
+                        period_in_number_literal = False
+                        number_literal = ""
                     elif in_number_literal and char not in "0123456789.":
                         print(f"NUMBER {number_literal} {number_literal}")
                         in_number_literal = False
@@ -189,6 +200,11 @@ test_data = {
         "",
     ],
     "1234.1234": [
+        0,
+        "NUMBER 1234.1234 1234.1234\nEOF  null\n",
+        "",
+    ],
+    "1234.1234.1234.": [
         0,
         "NUMBER 1234.1234 1234.1234\nEOF  null\n",
         "",
