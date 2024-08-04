@@ -18,6 +18,7 @@ one_char_token_type_dict = {
     "!": "BANG",
     "<": "LESS",
     ">": "GREATER",
+    "/": "SLASH",
 }
 
 two_char_token_type_dict = {
@@ -54,10 +55,6 @@ def main():
 
     if file_contents:
         for line_number, line in enumerate(file_contents):
-            for char in line:
-                if not char in one_char_token_type_dict:
-                    eprint(f"[line {line_number+1}] Error: Unexpected character: {char}")
-                    exit_code = 65
             skip_next_char = False
             for idx, char in enumerate(line):
                 if skip_next_char:
@@ -72,9 +69,14 @@ def main():
                             char = potential_two_char_token
                             token = two_char_token_type_dict[potential_two_char_token]
                             skip_next_char = True
+                        elif potential_two_char_token == "//":
+                            break
                     except:
                         pass
                     print(f"{token} {char} null")
+                else:
+                    eprint(f"[line {line_number+1}] Error: Unexpected character: {char}")
+                    exit_code = 65
         print("EOF  null")
     else:
         print("EOF  null")
@@ -114,6 +116,16 @@ test_data = {
     "<<=>>=": [
         0,
         "LESS < null\nLESS_EQUAL <= null\nGREATER > null\nGREATER_EQUAL >= null\nEOF  null\n",
+        "",
+    ],
+    "// Comment": [
+        0,
+        "EOF  null\n",
+        "",
+    ],
+    "/": [
+        0,
+        "SLASH / null\nEOF  null\n",
         "",
     ],
 }
