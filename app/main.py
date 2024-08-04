@@ -54,11 +54,13 @@ def main():
         file_contents = file.readlines()
 
     if file_contents:
+        in_string_literal = False
+        string_literal = ""
         for line_number, line in enumerate(file_contents):
-            skip_next_char = False
+            skip_next_n_chars = 0
             for idx, char in enumerate(line):
-                if skip_next_char:
-                    skip_next_char = False
+                if skip_next_n_chars:
+                    skip_next_n_chars -= 1
                     continue
                 if char in one_char_token_type_dict:
                     token = one_char_token_type_dict[char]
@@ -68,20 +70,29 @@ def main():
                         if potential_two_char_token in two_char_token_type_dict.keys():
                             char = potential_two_char_token
                             token = two_char_token_type_dict[potential_two_char_token]
-                            skip_next_char = True
+                            skip_next_n_chars = 1
                         elif potential_two_char_token == "//":
                             break
                     except:
                         pass
                     print(f"{token} {char} null")
                 else:
+                    if char == '"':
+                        if in_string_literal:
+                            print(f'STRING "{string_literal}" {string_literal}')
+                        in_string_literal = not in_string_literal
+                    elif in_string_literal:
+                        string_literal += char
                     # char is not (part of) a token
-                    if char.isspace():
+                    elif char.isspace():
                         # skip over it
                         pass
                     else:
                         eprint(f"[line {line_number+1}] Error: Unexpected character: {char}")
                         exit_code = 65
+        if in_string_literal:
+            eprint(f"[line {line_number+1}] Error: Unterminated string.")
+            exit_code = 65
         print("EOF  null")
     else:
         print("EOF  null")
@@ -137,6 +148,16 @@ test_data = {
         0,
         "LEFT_PAREN ( null\nRIGHT_PAREN ) null\nEOF  null\n",
         "",
+    ],
+    '"foo baz"': [
+        0,
+        'STRING "foo baz" foo baz\nEOF  null\n',
+        "",
+    ],
+    '"bar': [
+        0,
+        "EOF  null\n",
+        "[line 1] Error: Unterminated string.\n",
     ],
 }
 
