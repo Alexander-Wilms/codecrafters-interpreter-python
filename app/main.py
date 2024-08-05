@@ -1,3 +1,4 @@
+import re
 import sys
 from pathlib import Path
 
@@ -84,9 +85,11 @@ def main():
     if file_contents:
         in_string_literal = False
         in_number_literal = False
+        in_identifier_string = False
         period_in_number_literal = False
         string_literal = ""
         number_literal = ""
+        identifier_string = ""
         for line_number, line in enumerate(file_contents):
             skip_next_n_chars = 0
             for idx, char in enumerate(line):
@@ -139,11 +142,20 @@ def main():
                             add_token(line, idx, in_string_literal, 0)
                     # char is not (part of) a token
                     elif char.isspace():
+                        if in_identifier_string:
+                            print(f"IDENTIFIER {identifier_string} null")
+                            in_identifier_string = False
+                            identifier_string = ""
                         # skip over it
                         pass
                     else:
-                        eprint(f"[line {line_number+1}] Error: Unexpected character: {char}")
-                        exit_code = 65
+                        # https://craftinginterpreters.com/scanning.html#regular-languages-and-expressions
+                        if re.match(r"[a-zA-Z_][a-zA-Z_0-9]*", char):
+                            in_identifier_string = True
+                            identifier_string += char
+                        else:
+                            eprint(f"[line {line_number+1}] Error: Unexpected character: {char}")
+                            exit_code = 65
         if in_string_literal:
             eprint(f"[line {line_number+1}] Error: Unterminated string.")
             exit_code = 65
@@ -159,6 +171,10 @@ def main():
             if add_dot:
                 print(f"DOT . null")
             in_number_literal = False
+        if in_identifier_string:
+            print(f"IDENTIFIER {identifier_string} null")
+            in_identifier_string = False
+            identifier_string = ""
         print("EOF  null")
     else:
         print("EOF  null")
@@ -254,6 +270,11 @@ test_data = {
         65,
         'LEFT_PAREN ( null\nNUMBER 5 5.0\nPLUS + null\nNUMBER 3 3.0\nRIGHT_PAREN ) null\nGREATER > null\nNUMBER 7 7.0\nSEMICOLON ; null\nSTRING "Success" Success\nBANG_EQUAL != null\nSTRING "Failure" Failure\nNUMBER 10 10.0\nGREATER_EQUAL >= null\nNUMBER 5 5.0\nEOF  null\n',
         "[line 1] Error: Unexpected character: &\n",
+    ],
+    "foo bar _hello": [
+        0,
+        "IDENTIFIER foo null\nIDENTIFIER bar null\nIDENTIFIER _hello null\nEOF  null\n",
+        "",
     ],
 }
 
