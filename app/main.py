@@ -61,7 +61,7 @@ def format_number_literal(number_literal: str) -> str:
 def add_token(line, idx, in_string_literal, skip_next_n_chars) -> tuple[int, int]:
     char = line[idx]
     token = one_char_token_type_dict[char]
-    try:
+    if idx + 1 <= len(line)-1:
         # wrap in try except so we don't have to check if we're out of bounds of the string
         potential_two_char_token = char + line[idx + 1]
         if potential_two_char_token in two_char_token_type_dict.keys():
@@ -72,8 +72,7 @@ def add_token(line, idx, in_string_literal, skip_next_n_chars) -> tuple[int, int
             if not in_string_literal:
                 # // doesn't start a comment if it's part of a string literal
                 return 1, skip_next_n_chars
-    except:
-        pass
+
     print(f"{token} {char} null")
     return 0, skip_next_n_chars
 
