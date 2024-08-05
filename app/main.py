@@ -44,7 +44,8 @@ def format_number_literal(number_literal: str) -> str:
     return number_literal
 
 
-def add_token(line, idx, in_string_literal) -> int:
+def add_token(line, idx, in_string_literal, skip_next_n_chars) -> tuple[int, int]:
+    char = line[idx]
     token = one_char_token_type_dict[char]
     try:
         # wrap in try except so we don't have to check if we're out of bounds of the string
@@ -56,11 +57,11 @@ def add_token(line, idx, in_string_literal) -> int:
         elif potential_two_char_token == "//":
             if not in_string_literal:
                 # // doesn't start a comment if it's part of a string literal
-                return 1
+                return 1, skip_next_n_chars
     except:
         pass
     print(f"{token} {char} null")
-    return 0
+    return 0, skip_next_n_chars
 
 
 def main():
@@ -97,7 +98,10 @@ def main():
                     and not in_string_literal
                     and not in_number_literal
                 ):
-                    if add_token(line, idx, in_string_literal):
+                    comment, skip_next_n_chars = add_token(
+                        line, idx, in_string_literal, skip_next_n_chars
+                    )
+                    if comment:
                         break
                 else:
                     if char == '"':
@@ -127,7 +131,12 @@ def main():
                         number_literal = ""
 
                         # handle the char following the number
-                        add_token(line, idx, in_string_literal)
+                        if (
+                            char in one_char_token_type_dict
+                            and not in_string_literal
+                            and not in_number_literal
+                        ):
+                            add_token(line, idx, in_string_literal, 0)
                     # char is not (part of) a token
                     elif char.isspace():
                         # skip over it
@@ -243,7 +252,7 @@ test_data = {
     ],
     '(5+3) > 7 ; "Success" != "Failure" & 10 >= 5': [
         65,
-        'LEFT_PAREN ( null\nNUMBER 5 5.0\nNUMBER 3 3.0\nGREATER > null\nNUMBER 7 7.0\nSEMICOLON ; null\nSTRING "Success" Success\nBANG_EQUAL != null\nSTRING "Failure" Failure\nNUMBER 10 10.0\nGREATER_EQUAL >= null\nNUMBER 5 5.0\nEOF  null\n',
+        'LEFT_PAREN ( null\nNUMBER 5 5.0\nPLUS + null\nNUMBER 3 3.0\nRIGHT_PAREN ) null\nGREATER > null\nNUMBER 7 7.0\nSEMICOLON ; null\nSTRING "Success" Success\nBANG_EQUAL != null\nSTRING "Failure" Failure\nNUMBER 10 10.0\nGREATER_EQUAL >= null\nNUMBER 5 5.0\nEOF  null\n',
         "[line 1] Error: Unexpected character: &\n",
     ],
 }
