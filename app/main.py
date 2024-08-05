@@ -44,6 +44,25 @@ def format_number_literal(number_literal: str) -> str:
     return number_literal
 
 
+def add_token(line, idx, in_string_literal) -> int:
+    token = one_char_token_type_dict[char]
+    try:
+        # wrap in try except so we don't have to check if we're out of bounds of the string
+        potential_two_char_token = char + line[idx + 1]
+        if potential_two_char_token in two_char_token_type_dict.keys():
+            char = potential_two_char_token
+            token = two_char_token_type_dict[potential_two_char_token]
+            skip_next_n_chars = 1
+        elif potential_two_char_token == "//":
+            if not in_string_literal:
+                # // doesn't start a comment if it's part of a string literal
+                return 1
+    except:
+        pass
+    print(f"{token} {char} null")
+    return 0
+
+
 def main():
     exit_code = 0
 
@@ -78,21 +97,8 @@ def main():
                     and not in_string_literal
                     and not in_number_literal
                 ):
-                    token = one_char_token_type_dict[char]
-                    try:
-                        # wrap in try except so we don't have to check if we're out of bounds of the string
-                        potential_two_char_token = char + line[idx + 1]
-                        if potential_two_char_token in two_char_token_type_dict.keys():
-                            char = potential_two_char_token
-                            token = two_char_token_type_dict[potential_two_char_token]
-                            skip_next_n_chars = 1
-                        elif potential_two_char_token == "//":
-                            if not in_string_literal:
-                                # // doesn't start a comment if it's part of a string literal
-                                break
-                    except:
-                        pass
-                    print(f"{token} {char} null")
+                    if add_token(line, idx, in_string_literal):
+                        break
                 else:
                     if char == '"':
                         if in_string_literal:
@@ -119,6 +125,9 @@ def main():
                         in_number_literal = False
                         period_in_number_literal = False
                         number_literal = ""
+
+                        # handle the char following the number
+                        add_token(line, idx, in_string_literal)
                     # char is not (part of) a token
                     elif char.isspace():
                         # skip over it
@@ -231,6 +240,11 @@ test_data = {
         65,
         'STRING "Hello" Hello\nEQUAL = null\nSTRING "Hello" Hello\nNUMBER 42 42.0\nEQUAL_EQUAL == null\nNUMBER 42 42.0\nEOF  null\n',
         "[line 1] Error: Unexpected character: &\n[line 1] Error: Unexpected character: &\n",
+    ],
+    '(5+3) > 7 ; "Success" != "Failure" & 10 >= 5': [
+        65,
+        'LEFT_PAREN ( null\nNUMBER 5 5.0\nNUMBER 3 3.0\nGREATER > null\nNUMBER 7 7.0\nSEMICOLON ; null\nSTRING "Success" Success\nBANG_EQUAL != null\nSTRING "Failure" Failure\nNUMBER 10 10.0\nGREATER_EQUAL >= null\nNUMBER 5 5.0\nEOF  null\n',
+        "[line 1] Error: Unexpected character: &\n",
     ],
 }
 
