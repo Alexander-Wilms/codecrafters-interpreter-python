@@ -150,8 +150,10 @@ def main():
                         pass
                     else:
                         # https://craftinginterpreters.com/scanning.html#regular-languages-and-expressions
-                        if re.match(r"[a-zA-Z_][a-zA-Z_0-9]*", char):
+                        if not in_identifier_string and re.match(r"[a-zA-Z_]", char):
                             in_identifier_string = True
+                            identifier_string += char
+                        elif in_identifier_string and re.match(r"[a-zA-Z_0-9]", char):
                             identifier_string += char
                         else:
                             eprint(f"[line {line_number+1}] Error: Unexpected character: {char}")
