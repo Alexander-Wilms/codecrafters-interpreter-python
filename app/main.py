@@ -279,6 +279,11 @@ test_data = {
         'LEFT_BRACE { null\nIDENTIFIER str1 null\nEQUAL = null\nSTRING "Test" Test\nLESS < null\nGREATER > null\nIDENTIFIER str2 null\nEQUAL = null\nSTRING "Case" Case\nIDENTIFIER num1 null\nEQUAL = null\nNUMBER 100 100.0\nIDENTIFIER num2 null\nEQUAL = null\nNUMBER 200.00 200.0\nIDENTIFIER result null\nEQUAL = null\nLEFT_PAREN ( null\nIDENTIFIER str1 null\nEQUAL_EQUAL == null\nSTRING "Test" Test\nCOMMA , null\nIDENTIFIER str2 null\nBANG_EQUAL != null\nSTRING "Fail" Fail\nRIGHT_PAREN ) null\nLEFT_PAREN ( null\nIDENTIFIER num1 null\nPLUS + null\nRIGHT_PAREN ) null\nIDENTIFIER num2 null\nGREATER_EQUAL >= null\nNUMBER 300 300.0\nLEFT_PAREN ( null\nIDENTIFIER a null\nMINUS - null\nRIGHT_PAREN ) null\nIDENTIFIER b null\nLESS < null\nNUMBER 10 10.0\nRIGHT_BRACE } null\nEOF  null\n',
         "[line 6] Error: Unexpected character: &\n[line 6] Error: Unexpected character: &\n[line 6] Error: Unexpected character: &\n[line 6] Error: Unexpected character: &\n",
     ],
+    "_123_hello world_ 6az f00 foo": [
+        0,
+        "IDENTIFIER _123_hello null\nIDENTIFIER world_ null\nNUMBER 6 6.0\nIDENTIFIER az null\nIDENTIFIER f00 null\nIDENTIFIER foo null\nEOF  null\n",
+        "",
+    ],
 }
 
 
