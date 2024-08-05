@@ -1,6 +1,6 @@
 import sys
 
-from tokenizer import tokenize
+from app.tokenizer import tokenize
 
 
 def main():
