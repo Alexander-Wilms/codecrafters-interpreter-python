@@ -61,7 +61,7 @@ def format_number_literal(number_literal: str) -> str:
 def add_token(line, idx, in_string_literal, skip_next_n_chars) -> tuple[int, int]:
     char = line[idx]
     token = one_char_token_type_dict[char]
-    if idx + 1 <= len(line)-1:
+    if idx + 1 <= len(line) - 1:
         # wrap in try except so we don't have to check if we're out of bounds of the string
         potential_two_char_token = char + line[idx + 1]
         if potential_two_char_token in two_char_token_type_dict.keys():
@@ -144,11 +144,11 @@ def main():
                     elif char in "0123456789" and not in_identifier_string:
                         in_number_literal = True
                         number_literal += char
-                    elif in_number_literal and char == "." and period_in_number_literal == False:
+                    elif in_number_literal and char == "." and not period_in_number_literal:
                         in_number_literal = True
                         period_in_number_literal = True
                         number_literal += char
-                    elif in_number_literal and char == "." and period_in_number_literal == True:
+                    elif in_number_literal and char == "." and period_in_number_literal:
                         print(f"NUMBER {number_literal} {number_literal}")
                         print("DOT . null")
                         in_number_literal = False
