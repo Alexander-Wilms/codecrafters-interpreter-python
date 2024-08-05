@@ -109,6 +109,8 @@ def main():
                     elif in_number_literal and char not in "0123456789.":
                         print(f"NUMBER {number_literal} {number_literal}")
                         in_number_literal = False
+                        period_in_number_literal = False
+                        number_literal = ""
                     # char is not (part of) a token
                     elif char.isspace():
                         # skip over it
@@ -215,7 +217,7 @@ test_data = {
     ],
     "1234.1234.1234.": [
         0,
-        "NUMBER 1234.1234 1234.1234\nDOT . null\nNUMBER 1234 1234.0\nEOF  null\n",
+        "NUMBER 1234.1234 1234.1234\nDOT . null\nNUMBER 1234 1234.0\nDOT . null\nEOF  null\n",
         "",
     ],
 }
