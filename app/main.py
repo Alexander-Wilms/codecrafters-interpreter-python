@@ -227,6 +227,11 @@ test_data = {
         "NUMBER 1234.1234 1234.1234\nDOT . null\nNUMBER 1234 1234.0\nDOT . null\nEOF  null\n",
         "",
     ],
+    '"Hello" = "Hello" && 42 == 42': [
+        65,
+        'STRING "Hello" Hello\nEQUAL = null\nSTRING "Hello" Hello\nNUMBER 42 42.0\nEQUAL_EQUAL == null\nNUMBER 42 42.0\nEOF  null\n',
+        "[line 1] Error: Unexpected character: &\n[line 1] Error: Unexpected character: &\n",
+    ],
 }
 
 
