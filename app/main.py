@@ -36,6 +36,14 @@ def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
 
+def format_number_literal(number_literal: str) -> str:
+    if not "." in number_literal:
+        number_literal += ".0"
+    elif number_literal[-1] == ".":
+        number_literal += "0"
+    return number_literal
+
+
 def main():
     exit_code = 0
 
@@ -107,7 +115,7 @@ def main():
                         period_in_number_literal = False
                         number_literal = ""
                     elif in_number_literal and char not in "0123456789.":
-                        print(f"NUMBER {number_literal} {number_literal}")
+                        print(f"NUMBER {number_literal} {format_number_literal(number_literal)}")
                         in_number_literal = False
                         period_in_number_literal = False
                         number_literal = ""
@@ -126,11 +134,10 @@ def main():
             add_dot = False
             if number_literal[-1] == ".":
                 number_literal_a = number_literal[0:-1]
-                number_literal += "0"
                 add_dot = True
             else:
                 number_literal_a = number_literal
-            print(f"NUMBER {number_literal_a} {number_literal}")
+            print(f"NUMBER {number_literal_a} {format_number_literal(number_literal)}")
             if add_dot:
                 print(f"DOT . null")
             in_number_literal = False
