@@ -38,11 +38,7 @@ def eprint(*args, **kwargs):
 
 
 def format_number_literal(number_literal: str) -> str:
-    if not "." in number_literal:
-        number_literal += ".0"
-    elif number_literal[-1] == ".":
-        number_literal += "0"
-    return number_literal
+    return str(float(number_literal))
 
 
 def add_token(line, idx, in_string_literal, skip_next_n_chars) -> tuple[int, int]:
@@ -278,6 +274,11 @@ test_data = {
         "IDENTIFIER foo null\nIDENTIFIER bar null\nIDENTIFIER _hello null\nEOF  null\n",
         "",
     ],
+    '{\n// This is a complex test case\nstr1 = "Test"<|SPACE|>str2 = "Case"\nnum1 = 100\nnum2 = 200.00\nresult = (str1 == "Test" , str2 != "Fail") && (num1 + num2) >= 300 && (a - b) < 10\n}\n': [
+        0,
+        "LEFT_BRACE { null\nIDENTIFIER str1 null\nEQUAL = null\nSTRING "Test" Test\nIDENTIFIER str2 null\nEQUAL = null\nSTRING "Case" Case\nIDENTIFIER num1 null\nEQUAL = null\nNUMBER 100 100.0\nIDENTIFIER num2 null\nEQUAL = null\nNUMBER 200.00 200.00\nIDENTIFIER result null\nEQUAL = null\nLEFT_PAREN ( null\nIDENTIFIER str1 null\nEQUAL_EQUAL == null\nSTRING "Test" Test\nCOMMA , null\nIDENTIFIER str2 null\nBANG_EQUAL != null\nSTRING "Fail" Fail\nRIGHT_PAREN ) null\nLEFT_PAREN ( null\nIDENTIFIER num1 null\nPLUS + null\nRIGHT_PAREN ) null\nIDENTIFIER num2 null\nGREATER_EQUAL >= null\nNUMBER 300 300.0\nLEFT_PAREN ( null\nIDENTIFIER a null\nMINUS - null\nRIGHT_PAREN ) null\nIDENTIFIER b null\nLESS < null\nNUMBER 10 10.0\nRIGHT_BRACE } null\nEOF  null\n",
+        "[line 7] Error: Unexpected character: &\n[line 7] Error: Unexpected character: &\n[line 7] Error: Unexpected character: &\n[line 7] Error: Unexpected character: &\n",
+    ]
 }
 
 
