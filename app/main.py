@@ -122,7 +122,7 @@ def main():
         if in_number_literal:
             # number literal that's not followed by another character before the EOF
             if number_literal[-1] == ".":
-                number_literal_a = number_literal[0:-2]
+                number_literal_a = number_literal[0:-1]
                 number_literal += "0"
             else:
                 number_literal_a = number_literal
