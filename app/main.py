@@ -121,7 +121,12 @@ def main():
             exit_code = 65
         if in_number_literal:
             # number literal that's not followed by another character before the EOF
-            print(f"NUMBER {number_literal} {number_literal}")
+            if number_literal[-1] == ".":
+                number_literal_a = number_literal[0:-2]
+                number_literal += "0"
+            else:
+                number_literal_a = number_literal
+            print(f"NUMBER {number_literal_a} {number_literal}")
             in_number_literal = False
         print("EOF  null")
     else:
@@ -206,7 +211,7 @@ test_data = {
     ],
     "1234.1234.1234.": [
         0,
-        "NUMBER 1234.1234 1234.1234\nEOF  null\n",
+        "NUMBER 1234.1234 1234.1234\nDOT . null\nNUMBER 1234 1234.0\nEOF  null\n",
         "",
     ],
 }
