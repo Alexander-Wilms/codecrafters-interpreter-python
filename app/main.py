@@ -114,7 +114,7 @@ def main():
                         in_string_literal = not in_string_literal
                     elif in_string_literal:
                         string_literal += char
-                    elif char in "0123456789":
+                    elif char in "0123456789" and not in_identifier_string:
                         in_number_literal = True
                         number_literal += char
                     elif in_number_literal and char == "." and period_in_number_literal == False:
