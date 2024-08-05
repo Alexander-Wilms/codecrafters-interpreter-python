@@ -121,12 +121,16 @@ def main():
             exit_code = 65
         if in_number_literal:
             # number literal that's not followed by another character before the EOF
+            add_dot = False
             if number_literal[-1] == ".":
                 number_literal_a = number_literal[0:-1]
                 number_literal += "0"
+                add_dot = True
             else:
                 number_literal_a = number_literal
             print(f"NUMBER {number_literal_a} {number_literal}")
+            if add_dot:
+                print(f"DOT . null")
             in_number_literal = False
         print("EOF  null")
     else:
