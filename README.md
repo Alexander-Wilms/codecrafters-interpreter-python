@@ -49,3 +49,12 @@ Note: This section is for stages 2 and beyond.
    `app/main.py`.
 3. Commit your changes and run `git push origin master` to submit your solution
    to CodeCrafters. Test output will be streamed to your terminal.
+
+# Notes
+
+* Running tests:
+  * `pytest -vv app/test.py`
+* Formatting: <!-- https://github.com/astral-sh/ruff/issues/465 -->
+  * `ruff check --select I --fix . && ruff format --line-length 100 .`
+* Pushing to Codecrafters and GitHub:
+  * `git remote | xargs -L1 git push -f --all`
