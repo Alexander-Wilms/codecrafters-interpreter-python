@@ -92,6 +92,14 @@ def main():
                 if skip_next_n_chars:
                     skip_next_n_chars -= 1
                     continue
+
+                # char is not (part of) a token
+                if char in one_char_token_type_dict.keys():
+                    if in_identifier_string:
+                        print(f"IDENTIFIER {identifier_string} null")
+                        in_identifier_string = False
+                        identifier_string = ""
+
                 if (
                     char in one_char_token_type_dict
                     and not in_string_literal
@@ -136,13 +144,6 @@ def main():
                             and not in_number_literal
                         ):
                             add_token(line, idx, in_string_literal, 0)
-
-                    # char is not (part of) a token
-                    if char in one_char_token_type_dict.keys():
-                        if in_identifier_string:
-                            print(f"IDENTIFIER {identifier_string} null")
-                            in_identifier_string = False
-                            identifier_string = ""
 
                     if char.isspace():
                         if in_identifier_string:
