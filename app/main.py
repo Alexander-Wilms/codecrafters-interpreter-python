@@ -136,15 +136,21 @@ def main():
                             and not in_number_literal
                         ):
                             add_token(line, idx, in_string_literal, 0)
+                            
                     # char is not (part of) a token
-                    elif char.isspace():
+                    if char.isspace():
                         if in_identifier_string:
                             print(f"IDENTIFIER {identifier_string} null")
                             in_identifier_string = False
                             identifier_string = ""
                         # skip over it
                         pass
-                    else:
+                    elif (
+                        not in_number_literal
+                        and not in_string_literal
+                        and char not in one_char_token_type_dict.keys()
+                        and char != '"'
+                    ):
                         # https://craftinginterpreters.com/scanning.html#regular-languages-and-expressions
                         if not in_identifier_string and re.match(r"[a-zA-Z_]", char):
                             in_identifier_string = True
