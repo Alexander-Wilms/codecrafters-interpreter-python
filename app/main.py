@@ -29,6 +29,25 @@ two_char_token_type_dict = {
     ">=": "GREATER_EQUAL",
 }
 
+reserved_words = [
+    "and",
+    "class",
+    "else",
+    "false",
+    "for",
+    "fun",
+    "if",
+    "nil",
+    "or",
+    "print",
+    "return",
+    "super",
+    "this",
+    "true",
+    "var",
+    "while",
+]
+
 
 def eprint(*args, **kwargs):
     """
@@ -59,6 +78,13 @@ def add_token(line, idx, in_string_literal, skip_next_n_chars) -> tuple[int, int
         pass
     print(f"{token} {char} null")
     return 0, skip_next_n_chars
+
+
+def add_identifier(identifier: str) -> None:
+    if identifier in reserved_words:
+        print(f"{identifier.upper()} {identifier} null")
+    else:
+        print(f"IDENTIFIER {identifier} null")
 
 
 def main():
@@ -96,7 +122,7 @@ def main():
                 # char is not (part of) a token
                 if char in one_char_token_type_dict.keys():
                     if in_identifier_string:
-                        print(f"IDENTIFIER {identifier_string} null")
+                        add_identifier(identifier_string)
                         in_identifier_string = False
                         identifier_string = ""
 
@@ -147,7 +173,7 @@ def main():
 
                     if char.isspace():
                         if in_identifier_string:
-                            print(f"IDENTIFIER {identifier_string} null")
+                            add_identifier(identifier_string)
                             in_identifier_string = False
                             identifier_string = ""
                         # skip over it
@@ -183,7 +209,7 @@ def main():
                 print(f"DOT . null")
             in_number_literal = False
         if in_identifier_string:
-            print(f"IDENTIFIER {identifier_string} null")
+            add_identifier(identifier_string)
             in_identifier_string = False
             identifier_string = ""
         print("EOF  null")
@@ -289,12 +315,17 @@ test_data = {
     ],
     '{\n// This is a complex test case\nstr1 = "Test"< >str2 = "Case"\nnum1 = 100\nnum2 = 200.00\nresult = (str1 == "Test" , str2 != "Fail") && (num1 + num2) >= 300 && (a - b) < 10\n}\n': [
         65,
-        'LEFT_BRACE { null\nIDENTIFIER str1 null\nEQUAL = null\nSTRING "Test" Test\nLESS < null\nGREATER > null\nIDENTIFIER str2 null\nEQUAL = null\nSTRING "Case" Case\nIDENTIFIER num1 null\nEQUAL = null\nNUMBER 100 100.0\nIDENTIFIER num2 null\nEQUAL = null\nNUMBER 200.00 200.0\nIDENTIFIER result null\nEQUAL = null\nLEFT_PAREN ( null\nIDENTIFIER str1 null\nEQUAL_EQUAL == null\nSTRING "Test" Test\nCOMMA , null\nIDENTIFIER str2 null\nBANG_EQUAL != null\nSTRING "Fail" Fail\nRIGHT_PAREN ) null\nLEFT_PAREN ( null\nIDENTIFIER num1 null\nPLUS + null\nRIGHT_PAREN ) null\nIDENTIFIER num2 null\nGREATER_EQUAL >= null\nNUMBER 300 300.0\nLEFT_PAREN ( null\nIDENTIFIER a null\nMINUS - null\nRIGHT_PAREN ) null\nIDENTIFIER b null\nLESS < null\nNUMBER 10 10.0\nRIGHT_BRACE } null\nEOF  null\n',
+        'LEFT_BRACE { null\nIDENTIFIER str1 null\nEQUAL = null\nSTRING "Test" Test\nLESS < null\nGREATER > null\nIDENTIFIER str2 null\nEQUAL = null\nSTRING "Case" Case\nIDENTIFIER num1 null\nEQUAL = null\nNUMBER 100 100.0\nIDENTIFIER num2 null\nEQUAL = null\nNUMBER 200.00 200.0\nIDENTIFIER result null\nEQUAL = null\nLEFT_PAREN ( null\nIDENTIFIER str1 null\nEQUAL_EQUAL == null\nSTRING "Test" Test\nCOMMA , null\nIDENTIFIER str2 null\nBANG_EQUAL != null\nSTRING "Fail" Fail\nRIGHT_PAREN ) null\nLEFT_PAREN ( null\nIDENTIFIER num1 null\nPLUS + null\nIDENTIFIER num2 null\nRIGHT_PAREN ) null\nGREATER_EQUAL >= null\nNUMBER 300 300.0\nLEFT_PAREN ( null\nIDENTIFIER a null\nMINUS - null\nIDENTIFIER b null\nRIGHT_PAREN ) null\nLESS < null\nNUMBER 10 10.0\nRIGHT_BRACE } null\nEOF  null\n',
         "[line 6] Error: Unexpected character: &\n[line 6] Error: Unexpected character: &\n[line 6] Error: Unexpected character: &\n[line 6] Error: Unexpected character: &\n",
     ],
     "_123_hello world_ 6az f00 foo": [
         0,
         "IDENTIFIER _123_hello null\nIDENTIFIER world_ null\nNUMBER 6 6.0\nIDENTIFIER az null\nIDENTIFIER f00 null\nIDENTIFIER foo null\nEOF  null\n",
+        "",
+    ],
+    "and": [
+        0,
+        "AND and null\nEOF  null\n",
         "",
     ],
 }
